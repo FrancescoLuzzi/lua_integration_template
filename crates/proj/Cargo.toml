@@ -1,0 +1,10 @@
+[package]
+name = "proj"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+proj_lua = { path = "../proj_lua"}
+proj_macro = { path = "../proj_macro"}
+
+mlua = { workspace = true }

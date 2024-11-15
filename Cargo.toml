@@ -1,0 +1,10 @@
+[workspace]
+members = ["crates/proj*"]
+# Only check / build main crates by default (check all with `--workspace`)
+default-members = []
+# exclude = []
+resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1"
+mlua = { version = "0.10.1", features = ["anyhow", "async", "luajit", "send", "userdata-wrappers", "vendored", "serialize"] }

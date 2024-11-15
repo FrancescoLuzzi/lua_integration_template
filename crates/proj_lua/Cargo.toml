@@ -1,0 +1,13 @@
+[package]
+name = "proj_lua"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+proj_macro = { path = "../proj_macro"}
+proj_core = { path = "../proj_core"}
+
+mlua = { workspace = true }
+anyhow = { workspace = true }
+
+matchit = "0.8.5"
