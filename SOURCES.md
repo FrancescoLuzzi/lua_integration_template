@@ -1,0 +1,9 @@
+- https://github.com/sxyazi/yazi/tree/main/yazi-plugin
+- https://github.com/wez/wezterm/blob/main/config/src/config.rs#L1054
+- https://github.com/wez/wezterm/blob/main/config/src/lua.rs#L211
+- https://github.com/wez/wezterm/blob/main/config/src/lib.rs#L67
+- https://github.com/cargo-generate/cargo-generate
+- https://docs.rs/mlua/latest/mlua/struct.Variadic.html
+- https://github.com/mitsuhiko/minijinja/tree/main/examples/render-template
+- https://github.com/mitsuhiko/minijinja/tree/main/examples/load-lazy
+- https://github.com/ibraheemdev/matchit/tree/master/examples
