@@ -8,3 +8,4 @@ resolver = "2"
 [workspace.dependencies]
 anyhow = "1"
 mlua = { version = "0.10.1", features = ["anyhow", "async", "luajit", "send", "userdata-wrappers", "vendored", "serialize"] }
+minijinja = { version = "2.5.0", features = ["loader", "json"] }
