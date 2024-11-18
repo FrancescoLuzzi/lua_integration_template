@@ -18,6 +18,7 @@ pub enum HttpMethod {
     Delete,
 }
 
+//TODO: generalize this piece of code to be generic over a custom trait (Handler?)
 #[derive(Default, Clone)]
 pub struct LuaRouter {
     router: HashMap<HttpMethod, Router<Function>>,
