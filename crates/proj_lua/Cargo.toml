@@ -10,5 +10,6 @@ proj_core = { path = "../proj_core"}
 mlua = { workspace = true }
 anyhow = { workspace = true }
 minijinja = { workspace = true }
+http = { workspace = true }
 
 matchit = "0.8.5"

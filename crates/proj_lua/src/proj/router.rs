@@ -1,34 +1,25 @@
+pub use http::Method;
 use matchit::Router;
 use mlua::{Function, IntoLua as _, Lua, Table, Value};
 use std::{
     collections::HashMap,
-    sync::{LazyLock, RwLock},
+    sync::{Arc, LazyLock, RwLock},
 };
 
-// TODO: make LuaRouter thread safe (RWLock per HttpMethod)
-pub static ROUTER: LazyLock<RwLock<LuaRouter>> = LazyLock::new(Default::default);
-
-#[derive(Eq, Hash, PartialEq, Clone)]
-pub enum HttpMethod {
-    Get,
-    Post,
-    Patch,
-    Put,
-    Head,
-    Delete,
-}
+// TODO: make LuaRouter thread safe (RWLock per Method)
+pub static ROUTER: LazyLock<Arc<RwLock<LuaRouter>>> = LazyLock::new(Default::default);
 
 //TODO: generalize this piece of code to be generic over a custom trait (Handler?)
 #[derive(Default, Clone)]
 pub struct LuaRouter {
-    router: HashMap<HttpMethod, Router<Function>>,
+    router: HashMap<Method, Router<Function>>,
 }
 
 impl LuaRouter {
     #[inline]
     fn register_handler<T: AsRef<str>>(
         &mut self,
-        method: HttpMethod,
+        method: Method,
         url: T,
         lua_fn: Function,
     ) -> anyhow::Result<()> {
@@ -40,35 +31,35 @@ impl LuaRouter {
     }
 
     fn get<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Get, url, lua_fn)
+        self.register_handler(Method::GET, url, lua_fn)
     }
 
     fn post<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Post, url, lua_fn)
+        self.register_handler(Method::POST, url, lua_fn)
     }
 
     fn put<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Put, url, lua_fn)
+        self.register_handler(Method::PUT, url, lua_fn)
     }
 
     fn delete<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Delete, url, lua_fn)
+        self.register_handler(Method::DELETE, url, lua_fn)
     }
 
     fn patch<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Patch, url, lua_fn)
+        self.register_handler(Method::PATCH, url, lua_fn)
     }
 
     fn head<T: AsRef<str>>(&mut self, url: T, lua_fn: Function) -> anyhow::Result<()> {
-        self.register_handler(HttpMethod::Head, url, lua_fn)
+        self.register_handler(Method::HEAD, url, lua_fn)
     }
 
     pub fn route<'a>(
         &'a self,
-        method: HttpMethod,
+        method: &Method,
         url: &'a str,
     ) -> Option<matchit::Match<'a, 'a, &Function>> {
-        self.router.get(&method)?.at(url).ok()
+        self.router.get(method)?.at(url).ok()
     }
 }
 

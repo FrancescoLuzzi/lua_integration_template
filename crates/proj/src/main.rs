@@ -1,11 +1,11 @@
-use proj_lua::{HttpMethod, LUA_CTX, ROUTER};
+use proj_lua::{Method, LUA_CTX, ROUTER};
 use proj_macro::plugin_preset;
 use std::thread;
 
 fn hello_route() {
     let router = ROUTER.read().unwrap();
     let matched = router
-        .route(HttpMethod::Get, "hello/testo/testo")
+        .route(&Method::GET, "hello/testo/testo")
         .expect("route not found");
     let callback = matched.value;
     let params = matched.params.iter().fold(
