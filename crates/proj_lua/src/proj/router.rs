@@ -1,6 +1,6 @@
 pub use http::Method;
-use matchit::Router;
-use mlua::{Function, IntoLua as _, Lua, Table, Value};
+use matchit::{Params, Router};
+use mlua::{Function, IntoLua, Lua, Table, Value};
 use std::{
     collections::HashMap,
     sync::{Arc, LazyLock, RwLock},
@@ -8,6 +8,27 @@ use std::{
 
 // TODO: make LuaRouter thread safe (RWLock per Method)
 pub static ROUTER: LazyLock<Arc<RwLock<LuaRouter>>> = LazyLock::new(Default::default);
+
+pub struct LuaParams(HashMap<String, String>);
+
+impl LuaParams {
+    pub fn new(params: Params<'_, '_>) -> Self {
+        Self(params.iter().fold(HashMap::new(), |mut map, (key, value)| {
+            map.insert(key.to_string(), value.to_string());
+            map
+        }))
+    }
+}
+
+impl IntoLua for LuaParams {
+    fn into_lua(self, lua: &Lua) -> Result<Value, mlua::Error> {
+        let table = lua.create_table()?;
+        for (key, value) in self.0.iter() {
+            table.raw_set(key.as_str(), value.as_str())?;
+        }
+        Ok(mlua::Value::Table(table))
+    }
+}
 
 //TODO: generalize this piece of code to be generic over a custom trait (Handler?)
 #[derive(Default, Clone)]
@@ -54,11 +75,11 @@ impl LuaRouter {
         self.register_handler(Method::HEAD, url, lua_fn)
     }
 
-    pub fn route<'a>(
-        &'a self,
+    pub fn route<'v>(
+        &self,
         method: &Method,
-        url: &'a str,
-    ) -> Option<matchit::Match<'a, 'a, &Function>> {
+        url: &'v str,
+    ) -> Option<matchit::Match<'_, 'v, &Function>> {
         self.router.get(method)?.at(url).ok()
     }
 }

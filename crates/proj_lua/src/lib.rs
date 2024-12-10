@@ -2,7 +2,7 @@ mod proj;
 
 use anyhow::{Ok, Result};
 use mlua::Lua;
-pub use proj::router::{LuaRouter, Method, ROUTER};
+pub use proj::router::{LuaParams, LuaRouter, Method, ROUTER};
 use std::sync::LazyLock;
 
 pub static LUA_CTX: LazyLock<Lua> = LazyLock::new(|| init_lua().expect("can't load lua env"));
