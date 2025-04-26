@@ -12,4 +12,4 @@ anyhow = { workspace = true }
 minijinja = { workspace = true }
 http = { workspace = true }
 
-matchit = "0.8.5"
+matchit = "0.8"

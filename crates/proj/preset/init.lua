@@ -22,6 +22,6 @@ proj = proj or {}
 
 proj.templates.add_template("hello", "Hello {{user.name}} {{user.surname}}")
 
-proj.router.get("hello/{name}/{surname}", function(params)
+proj.router.get("/hello/{name}/{surname}", function(params)
 	return proj.templates.render_template("hello", { user = params })
 end)
