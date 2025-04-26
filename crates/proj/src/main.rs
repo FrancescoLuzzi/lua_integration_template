@@ -1,28 +1,26 @@
-use proj_lua::{Method, LUA_CTX, ROUTER};
+use std::net::SocketAddr;
+
+use axum::Router;
+use proj_lua::{LUA_CTX, ROUTER};
 use proj_macro::plugin_preset;
-use std::thread;
+use proj_web::LuaRouterService;
 
-fn hello_route() {
-    let router = ROUTER.read().unwrap();
-    let matched = router
-        .route(&Method::GET, "hello/testo/testo")
-        .expect("route not found");
-    let callback = matched.value;
-    let params = matched.params.iter().fold(
-        LUA_CTX.create_table().expect("can't create table"),
-        |tbl, (key, value)| {
-            tbl.raw_set(key, value).expect("can't set item");
-            tbl
-        },
-    );
-
-    println!("{:?}", callback.call::<String>(params));
-}
-
-fn main() {
+#[tokio::main]
+async fn main() {
     LUA_CTX
         .load(plugin_preset!("init.lua"))
         .exec()
         .expect("can't load file");
-    thread::spawn(hello_route).join().unwrap();
+    let lua_service = LuaRouterService::new(ROUTER.clone());
+    let app = Router::new().fallback_service(lua_service);
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+        .await
+        .unwrap();
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .unwrap()
 }
